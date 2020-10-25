@@ -1,0 +1,22 @@
+/*  Author:
+ *  io.github.mikeh627
+ *  9/19/2020 -- Production Project
+ *  Css file with a small amount of code for making the interface a bit prettier
+ */
+
+.root {
+    -fx-font-size: 14px;
+    -fx-font-family: times-new-roman;
+    -fx-background-color: #ffffff;
+}
+
+.header-section {
+    -fx-padding: 20px;
+    -fx-font-size: 25px;
+    -fx-background-color: gray;
+}
+
+.header-text Label {
+    -fx-text-fill: #ffffff;
+    -fx-padding: 10px;
+}
