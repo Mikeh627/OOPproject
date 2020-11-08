@@ -4,12 +4,12 @@
  *  Controller application file, with methods for buttons, connection to database and initialization of program.
  */
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,6 +18,8 @@ import java.sql.SQLException;
 
 public class Controller {
 
+    ObservableList<Product> productLine = FXCollections.observableArrayList();
+
     @FXML
     private TextField manuName;
 
@@ -25,10 +27,28 @@ public class Controller {
     private TextField prodName;
 
     @FXML
-    private ChoiceBox<String> itemChoice;
+    private ChoiceBox<ItemType> itemChoice;
 
     @FXML
     private ComboBox<String> quantityCombo;
+
+    @FXML
+    private TextArea prodLog;
+
+    @FXML
+    private TableView<Product> prodTable;
+
+    @FXML
+    private TableColumn<?, ?> nameColumn;
+
+    @FXML
+    private TableColumn<?, ?> manuColumn;
+
+    @FXML
+    private TableColumn<?, ?> iTypeColumn;
+
+    @FXML
+    private ListView<Product> listTable;
 
     @FXML
     private Button btnAddProduct;
@@ -46,9 +66,14 @@ public class Controller {
 
     @FXML
     void addProduct(ActionEvent event) {
-        String type = itemChoice.getValue();
+        String type = itemChoice.getValue().code;
         String manufacturer = manuName.getText();
         String name = prodName.getText();
+
+        ProductionRecord product = new ProductionRecord(0);
+        String x = product.toString();
+        prodLog.setText(x);
+        populateList();
 
         try {
             String insSql = "INSERT INTO PRODUCT(type, manufacturer, name) "
@@ -69,7 +94,10 @@ public class Controller {
 
     @FXML
     void recordProduction(ActionEvent event) {
-
+        ProductionRecord  productionRecord = new ProductionRecord(listTable.getSelectionModel().getSelectedItem(),
+                Integer.parseInt(quantityCombo.getSelectionModel().getSelectedItem()));
+        String text = prodLog.getText() + productionRecord.toString() + "\n";
+        prodLog.setText(text);
         connDB();
         System.out.println("Production has been recorded!");
     }
@@ -80,8 +108,7 @@ public class Controller {
         /*
          *   Adds items to the choice box in the Production Line tab on user interface
          */
-        itemChoice.getItems().setAll(String.valueOf(ItemType.AUDIO), String.valueOf(ItemType.VISUAL),
-                String.valueOf(ItemType.AUDIO_MOBILE), String.valueOf(ItemType.VISUAL_MOBILE));
+        itemChoice.getItems().setAll(ItemType.values());
         /*
          *   Adds a drop down list for up to ??? and allows users to enter and value they'd like
          */
@@ -90,6 +117,9 @@ public class Controller {
         }
         quantityCombo.setEditable(true);
         quantityCombo.getSelectionModel().selectFirst();
+
+        setTable();
+        listTable.setItems(productLine);
     }
 
     public void connDB() {
@@ -116,4 +146,17 @@ public class Controller {
             e.printStackTrace();
         }
     }
+
+    public void setTable() {
+        nameColumn.setCellValueFactory(new PropertyValueFactory("Name"));
+        manuColumn.setCellValueFactory(new PropertyValueFactory("Manufacturer"));
+        iTypeColumn.setCellValueFactory(new PropertyValueFactory("Type"));
+        prodTable.setItems(productLine);
+    }
+
+    public void populateList() {
+        Product populate = new Widget(prodName.getText(), manuName.getText(), itemChoice.getValue());
+        productLine.add(populate);
+    }
+
 }

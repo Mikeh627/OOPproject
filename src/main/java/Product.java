@@ -1,4 +1,4 @@
-public class Product implements Item {
+public abstract class Product implements Item {
 
     private String Name, Manufacturer;
     private int ID;
@@ -34,6 +34,13 @@ public class Product implements Item {
 
     public void setManufacturer(String Manufacturer) {
         this.Manufacturer = Manufacturer;
+    }
+
+    public ItemType getType() {
+        return type;
+    }
+    public void setType(ItemType type) {
+        this.type = type;
     }
 }
 
