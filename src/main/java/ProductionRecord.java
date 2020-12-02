@@ -53,4 +53,6 @@ public class ProductionRecord {
 
     public Date getProdDate() { return prodDate; }
     public void setProdDate(Date prodDate) { this.prodDate = prodDate; }
+
+
 }
